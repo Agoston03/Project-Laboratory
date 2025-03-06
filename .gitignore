@@ -1,0 +1,14 @@
+# Ignore project-specific directories  
+/project/fmri_data/  
+/project/output/  
+/lightning_logs/  
+
+# Ignore compiled Python files  
+**/__pycache__/  
+
+# Ignore specific files  
+.env
+
+
+# Ignore virtual environment  
+.venv/  
