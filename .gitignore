@@ -9,6 +9,5 @@
 # Ignore specific files  
 .env
 
-
 # Ignore virtual environment  
-.venv/  
+.venv/

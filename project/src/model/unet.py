@@ -11,7 +11,7 @@ class Block(nn.Module):
         self.seq = nn.Sequential(
             nn.Conv3d(dim, 
                       dim_out, 
-                      kernel_size=3, 
+                      kernel_size=3,
                       padding=1),
             nn.ReLU(inplace=True),
             nn.Conv3d(dim_out, 
@@ -31,7 +31,7 @@ class DownSample(nn.Module):
         super().__init__()
         self.conv = Block(dim, 
                           dim_out)
-        self.pool = nn.MaxPool3d(kernel_size=2)
+        self.pool = nn.AvgPool3d(kernel_size=2)
 
     def forward(self, x):
         x = self.conv(x)
@@ -39,35 +39,27 @@ class DownSample(nn.Module):
         return x, pooled
 
 class UpSample(nn.Module):
-    def __init__(self, 
-                 dim, 
-                 dim_out):
+    def __init__(self, dim, dim_out):
         super().__init__()
         self.up = nn.ConvTranspose3d(dim, 
                                      dim_out, 
                                      kernel_size=2, 
-                                     stride=2)
-        self.conv = Block(dim_out * 2, dim_out)
+                                     stride=2) 
+        self.conv = Block(dim_out * 2, dim_out) 
 
     def forward(self, x1, x2):
         x1 = self.up(x1)
-
-        diffZ = x2.size()[2] - x1.size()[2]
-        diffY = x2.size()[3] - x1.size()[3]
-        diffX = x2.size()[4] - x1.size()[4]
-        x1 = F.pad(x1, [diffX // 2,
-                         diffX - diffX // 2, 
-                         diffY // 2, 
-                         diffY - diffY // 2, 
-                         diffZ // 2, 
-                         diffZ - diffZ // 2])
+        x1 = F.interpolate(input=x1,
+                           size=x2.shape[2:],
+                           mode='trilinear',
+                           align_corners=False)
 
         print(x1.shape)
         print(x2.shape)
 
-        x = torch.cat([x1, x2], dim=1) 
+        x = torch.cat([x1, x2], dim=1)
         return self.conv(x)
-
+    
 class UNet3D(nn.Module):
     def __init__(self, 
                  channels,

@@ -6,7 +6,7 @@ if __name__ == '__main__':
     from model.unet import LitUNet3D, UNet3D
     from pytorch_lightning import Trainer
 
-    base = r'C:\Users\agost\bme\6\Project-Laboratory\project\fmri_data\data'
+    base = r'C:\Users\agost\bme\6\project-laboratory\Project-Laboratory\project\fmri_data\data'
     fmri_dir = fr'{base}\fmri'
     train_path = fr'{base}\new_format_config\train.csv'
     val_path = fr'{base}\new_format_config\val.csv'
